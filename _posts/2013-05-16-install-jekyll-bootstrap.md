@@ -7,27 +7,27 @@ tags: [jekyll, bootstrap]
 ---
 {% include JB/setup %}
 
-# Install Jekyll-Bootstrap
+## Install Jekyll-Bootstrap
 
-# Run Jekyll Locally
+## Run Jekyll Locally
   gem install jekyll
   git clone Jekyll-Bootstrap
   cd Jekyll-Bootstrap
   jekyll serve [port]
 
-# Create a Post
+## Create a Post
   rake post title="title_name"
 
-# Create a Page
+## Create a Page
   rake page name="page_name.md"
   rake page name="pages/page_name"
 
-# Publish 
+## Publish 
   git add .
   git commit -m "message"
   git push origin master
 
-# Customize
+## Customize
   + Themes
     rake theme:install git="theme git path"
     rake theme:switch name="theme name"
