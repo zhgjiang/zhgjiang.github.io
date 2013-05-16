@@ -2,9 +2,8 @@
 layout: post
 title: "lightbox source"
 description: "lightbox 源码阅读笔记"
-tagline: "lightbox 源码阅读笔记"
 category: lessons
-tags: [javascript, web, lightbox]
+tags: [javascript,web,lightbox]
 ---
 {% include JB/setup %}
 
