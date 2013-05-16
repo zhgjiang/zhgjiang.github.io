@@ -5,11 +5,11 @@
     <meta charset="utf-8">
     <title>
       
-        Blog! - 
+        install jekyll bootstrap - 
       
       CrazyJune
     </title>
-    
+    <meta name="description" content="install jekyll bootstrap note">
     <meta name="author" content="crazyjune">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- HTML5 shim, for IE6-8 support of HTML elements -->
@@ -133,42 +133,97 @@
     <div class="container">
       <div class="content">
         
-<div class="page-header-wrapper">
-	<div class="page-header">
-  		<h1>Blog!  <small>crazyjune</small></h1>
-  	</div>
+<div class="page-header">
+  <h1>
+    install jekyll bootstrap 
+    
+  </h1>
 </div>
 
 <div class="row">
-  <div class="span12">
-    <h2>近期文章</h2>
+  <div class="span8">
+    <h2>Install Jekyll-Bootstrap</h2>
 
-<ul class="posts">
-  
-    <li><span>16 May 2013</span> &raquo; <a href="/lessons/2013/05/16/lightbox-source">lightbox source</a></li>
-  
-    <li><span>16 May 2013</span> &raquo; <a href="/lessons/2013/05/16/install-jekyll-bootstrap">install jekyll bootstrap</a></li>
-  
-    <li><span>29 Dec 2011</span> &raquo; <a href="/lessons/2011/12/29/jekyll-introduction">Jekyll Introduction</a></li>
-  
-</ul>
+<h2>Run Jekyll Locally</h2>
 
-<h2>To-Do</h2>
+<p>gem install jekyll
+  git clone Jekyll-Bootstrap
+  cd Jekyll-Bootstrap
+  jekyll serve [port]</p>
+
+<h2>Create a Post</h2>
+
+<p>rake post title=&quot;title_name&quot;</p>
+
+<h2>Create a Page</h2>
+
+<p>rake page name=&quot;page<em>name.md&quot;
+  rake page name=&quot;pages/page</em>name&quot;</p>
+
+<h2>Publish</h2>
+
+<p>git add .
+  git commit -m &quot;message&quot;
+  git push origin master</p>
+
+<h2>Customize</h2>
 
 <ul>
-<li>lightbox</li>
-<li>jQuery</li>
-<li>html</li>
-<li>html5</li>
-<li>css</li>
-<li>css3</li>
-<li>c</li>
-<li>c++</li>
-<li>linux</li>
-<li>数据结构</li>
-<li>算法</li>
+<li>Themes
+rake theme:install git=&quot;theme git path&quot;
+rake theme:switch name=&quot;theme name&quot;</li>
+<li>Blog Configuration
+_config.yml</li>
 </ul>
 
+    <hr>
+    <div class="pagination btn-group">
+      
+        <a class="btn prev" href="/lessons/2011/12/29/jekyll-introduction" title="Jekyll Introduction">&larr; Previous</a>
+      
+        <a class="btn" href="/archive.html">Archive</a>
+      
+        <a class="btn next" href="/lessons/2013/05/16/lightbox-source" title="lightbox source">Next &rarr;</a>
+      
+    </div>
+    <hr>
+    
+  </div>
+  
+  <div class="span4">
+    <section>
+      <h4>Published</h4>
+      <div class="date"><span>16 May 2013</span></div>
+    </section>
+    
+      <section>
+        <h4>Category</h4>
+        <span class="category">
+          lessons
+        </span>
+      </section>
+         
+    
+      <section>
+        <h4>Tags</h4>
+        <ul class="tag_box">
+          
+          
+
+
+  
+     
+    	<li><a href="/tags.html#jekyll-ref">jekyll <span>2</span></a></li>
+     
+    	<li><a href="/tags.html#bootstrap-ref">bootstrap <span>1</span></a></li>
+    
+  
+
+
+
+        </ul>
+      </section>
+             
   </div>
 </div>
 

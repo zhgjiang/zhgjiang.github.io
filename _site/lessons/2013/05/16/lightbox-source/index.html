@@ -1,0 +1,657 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>
+      
+        lightbox source - 
+      
+      CrazyJune
+    </title>
+    <meta name="description" content="lightbox 源码阅读笔记">
+    <meta name="author" content="crazyjune">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/themes/hooligan/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet">    
+    <link rel="stylesheet" type="text/css" href="/assets/themes/hooligan/css-social-buttons/css/zocial.stripped.css">
+    <link href="/assets/themes/hooligan/css/pygments.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/assets/themes/hooligan/css/darkstrap.css" rel="stylesheet" type="text/css" media="all">    
+    <link href="/assets/themes/hooligan/css/style.css?body=1" rel="stylesheet" type="text/css" media="all">
+
+    
+    <!-- fav and touch icons -->
+  <!-- Update these with your own images
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="images/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touch-icon-114x114.png">
+  -->
+  </head>
+
+  <body>
+    <div class="navbar">
+      <div class="navbar-inner">
+        <div class="container">
+          <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>      
+
+
+          <a class="brand" href="/">CrazyJune</a>
+
+
+          <div class="nav-collapse">
+            <ul class="nav">
+              
+              
+              
+
+
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/pages.html">Pages</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+    
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/tags.html">Tags</a></li>
+      	
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/categories.html">Categories</a></li>
+      	
+      
+    
+  
+    
+      
+      	
+      	<li><a href="/archive.html">Archive</a></li>
+      	
+      
+    
+  
+    
+      
+    
+  
+
+
+
+            </ul>
+            <ul class="nav pull-right social visible-desktop">
+              <li class="divider-vertical"></li>
+              
+                <li>
+                  <a href="https://github.com/zhgjiang" class="zocial github icon" target="_blank">
+                    <span class="hidden-desktop">Github</span>
+                  </a>
+                </li>
+              
+                  
+                                        
+                         
+                                  
+              
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="content">
+        
+<div class="page-header">
+  <h1>
+    lightbox source 
+    
+  </h1>
+</div>
+
+<div class="row">
+  <div class="span8">
+    <h2>lightbox source code</h2>
+
+<div class="highlight"><pre><code class="javascript">  <span class="cm">/*</span>
+<span class="cm">   Lightbox JS: Fullsize Image Overlays </span>
+<span class="cm">   by Lokesh Dhakar - http://www.huddletogether.com</span>
+
+<span class="cm">   For more information on this script, visit:</span>
+<span class="cm">   http://huddletogether.com/projects/lightbox/</span>
+
+<span class="cm">   Licensed under the Creative Commons Attribution 2.5 License - http://creativecommons.org/licenses/by/2.5/</span>
+<span class="cm">   (basically, do anything you want, just leave my name and link)</span>
+<span class="cm">   </span>
+<span class="cm">   Table of Contents</span>
+<span class="cm">   -----------------</span>
+<span class="cm">   Configuration</span>
+<span class="cm">   </span>
+<span class="cm">   Functions</span>
+<span class="cm">   - getPageScroll()</span>
+<span class="cm">   - getPageSize()</span>
+<span class="cm">   - pause()</span>
+<span class="cm">   - getKey()</span>
+<span class="cm">   - listenKey()</span>
+<span class="cm">   - showLightbox()</span>
+<span class="cm">   - hideLightbox()</span>
+<span class="cm">   - initLightbox()</span>
+<span class="cm">   - addLoadEvent()</span>
+<span class="cm">   </span>
+<span class="cm">   Function Calls</span>
+<span class="cm">   - addLoadEvent(initLightbox)</span>
+
+<span class="cm">*/</span>
+
+
+
+<span class="c1">//</span>
+<span class="c1">// Configuration</span>
+<span class="c1">//</span>
+
+<span class="c1">// If you would like to use a custom loading image or close button reference them in the next two lines.</span>
+<span class="kd">var</span> <span class="nx">loadingImage</span> <span class="o">=</span> <span class="s1">&#39;loading.gif&#39;</span><span class="p">;</span>     
+<span class="kd">var</span> <span class="nx">closeButton</span> <span class="o">=</span> <span class="s1">&#39;close.gif&#39;</span><span class="p">;</span>        
+
+
+
+
+
+<span class="c1">//</span>
+<span class="c1">// getPageScroll()</span>
+<span class="c1">// Returns array with x,y page scroll values.</span>
+<span class="c1">// Core code from - quirksmode.org</span>
+<span class="c1">//</span>
+<span class="kd">function</span> <span class="nx">getPageScroll</span><span class="p">(){</span>
+
+    <span class="kd">var</span> <span class="nx">yScroll</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">pageYOffset</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">yScroll</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">pageYOffset</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span> <span class="o">&amp;&amp;</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">scrollTop</span><span class="p">){</span>   <span class="c1">// Explorer 6 Strict</span>
+        <span class="nx">yScroll</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">scrollTop</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">)</span> <span class="p">{</span><span class="c1">// all other Explorers</span>
+        <span class="nx">yScroll</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">scrollTop</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">arrayPageScroll</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="nx">yScroll</span><span class="p">)</span> 
+    <span class="k">return</span> <span class="nx">arrayPageScroll</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+
+<span class="c1">//</span>
+<span class="c1">// getPageSize()</span>
+<span class="c1">// Returns array with page width, height and window width, height</span>
+<span class="c1">// Core code from - quirksmode.org</span>
+<span class="c1">// Edit for Firefox by pHaez</span>
+<span class="c1">//</span>
+<span class="kd">function</span> <span class="nx">getPageSize</span><span class="p">(){</span>
+    
+    <span class="kd">var</span> <span class="nx">xScroll</span><span class="p">,</span> <span class="nx">yScroll</span><span class="p">;</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">innerHeight</span> <span class="o">&amp;&amp;</span> <span class="nb">window</span><span class="p">.</span><span class="nx">scrollMaxY</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="nx">xScroll</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">scrollWidth</span><span class="p">;</span>
+        <span class="nx">yScroll</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">innerHeight</span> <span class="o">+</span> <span class="nb">window</span><span class="p">.</span><span class="nx">scrollMaxY</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">scrollHeight</span> <span class="o">&gt;</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">offsetHeight</span><span class="p">){</span> <span class="c1">// all but Explorer Mac</span>
+        <span class="nx">xScroll</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">scrollWidth</span><span class="p">;</span>
+        <span class="nx">yScroll</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">scrollHeight</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// Explorer Mac...would also work in Explorer 6 Strict, Mozilla and Safari</span>
+        <span class="nx">xScroll</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">offsetWidth</span><span class="p">;</span>
+        <span class="nx">yScroll</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">offsetHeight</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="kd">var</span> <span class="nx">windowWidth</span><span class="p">,</span> <span class="nx">windowHeight</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">innerHeight</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">// all except Explorer</span>
+        <span class="nx">windowWidth</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">innerWidth</span><span class="p">;</span>
+        <span class="nx">windowHeight</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">innerHeight</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span> <span class="o">&amp;&amp;</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">clientHeight</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// Explorer 6 Strict Mode</span>
+        <span class="nx">windowWidth</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">clientWidth</span><span class="p">;</span>
+        <span class="nx">windowHeight</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">documentElement</span><span class="p">.</span><span class="nx">clientHeight</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// other Explorers</span>
+        <span class="nx">windowWidth</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">clientWidth</span><span class="p">;</span>
+        <span class="nx">windowHeight</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">clientHeight</span><span class="p">;</span>
+    <span class="p">}</span>    
+    
+    <span class="c1">// for small pages with total height less then height of the viewport</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">yScroll</span> <span class="o">&lt;</span> <span class="nx">windowHeight</span><span class="p">){</span>
+        <span class="nx">pageHeight</span> <span class="o">=</span> <span class="nx">windowHeight</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> 
+        <span class="nx">pageHeight</span> <span class="o">=</span> <span class="nx">yScroll</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// for small pages with total width less then width of the viewport</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">xScroll</span> <span class="o">&lt;</span> <span class="nx">windowWidth</span><span class="p">){</span>   
+        <span class="nx">pageWidth</span> <span class="o">=</span> <span class="nx">windowWidth</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">pageWidth</span> <span class="o">=</span> <span class="nx">xScroll</span><span class="p">;</span>
+    <span class="p">}</span>
+
+
+    <span class="nx">arrayPageSize</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Array</span><span class="p">(</span><span class="nx">pageWidth</span><span class="p">,</span><span class="nx">pageHeight</span><span class="p">,</span><span class="nx">windowWidth</span><span class="p">,</span><span class="nx">windowHeight</span><span class="p">)</span> 
+    <span class="k">return</span> <span class="nx">arrayPageSize</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="c1">//</span>
+<span class="c1">// pause(numberMillis)</span>
+<span class="c1">// Pauses code execution for specified time. Uses busy code, not good.</span>
+<span class="c1">// Code from http://www.faqts.com/knowledge_base/view.phtml/aid/1602</span>
+<span class="c1">//</span>
+<span class="kd">function</span> <span class="nx">pause</span><span class="p">(</span><span class="nx">numberMillis</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">exitTime</span> <span class="o">=</span> <span class="nx">now</span><span class="p">.</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">+</span> <span class="nx">numberMillis</span><span class="p">;</span>
+    <span class="k">while</span> <span class="p">(</span><span class="kc">true</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">now</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">();</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">now</span><span class="p">.</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">&gt;</span> <span class="nx">exitTime</span><span class="p">)</span>
+            <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">//</span>
+<span class="c1">// getKey(key)</span>
+<span class="c1">// Gets keycode. If &#39;x&#39; is pressed then it hides the lightbox.</span>
+<span class="c1">//</span>
+
+<span class="kd">function</span> <span class="nx">getKey</span><span class="p">(</span><span class="nx">e</span><span class="p">){</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">e</span> <span class="o">==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// ie</span>
+        <span class="nx">keycode</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">keyCode</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span> <span class="c1">// mozilla</span>
+        <span class="nx">keycode</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">which</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">key</span> <span class="o">=</span> <span class="nb">String</span><span class="p">.</span><span class="nx">fromCharCode</span><span class="p">(</span><span class="nx">keycode</span><span class="p">).</span><span class="nx">toLowerCase</span><span class="p">();</span>
+    
+    <span class="k">if</span><span class="p">(</span><span class="nx">key</span> <span class="o">==</span> <span class="s1">&#39;x&#39;</span><span class="p">){</span> <span class="nx">hideLightbox</span><span class="p">();</span> <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="c1">//</span>
+<span class="c1">// listenKey()</span>
+<span class="c1">//</span>
+<span class="kd">function</span> <span class="nx">listenKey</span> <span class="p">()</span> <span class="p">{</span>   <span class="nb">document</span><span class="p">.</span><span class="nx">onkeypress</span> <span class="o">=</span> <span class="nx">getKey</span><span class="p">;</span> <span class="p">}</span>
+    
+
+<span class="c1">//</span>
+<span class="c1">// showLightbox()</span>
+<span class="c1">// Preloads images. Pleaces new image in lightbox then centers and displays.</span>
+<span class="c1">//</span>
+<span class="kd">function</span> <span class="nx">showLightbox</span><span class="p">(</span><span class="nx">objLink</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="c1">// prep objects</span>
+    <span class="kd">var</span> <span class="nx">objOverlay</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;overlay&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">objLightbox</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;lightbox&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">objCaption</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;lightboxCaption&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">objImage</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;lightboxImage&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">objLoadingImage</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;loadingImage&#39;</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">objLightboxDetails</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;lightboxDetails&#39;</span><span class="p">);</span>
+
+    
+    <span class="kd">var</span> <span class="nx">arrayPageSize</span> <span class="o">=</span> <span class="nx">getPageSize</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">arrayPageScroll</span> <span class="o">=</span> <span class="nx">getPageScroll</span><span class="p">();</span>
+
+    <span class="c1">// center loadingImage if it exists</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">objLoadingImage</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">objLoadingImage</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arrayPageScroll</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">((</span><span class="nx">arrayPageSize</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="mi">35</span> <span class="o">-</span> <span class="nx">objLoadingImage</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">);</span>
+        <span class="nx">objLoadingImage</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="p">(((</span><span class="nx">arrayPageSize</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">20</span> <span class="o">-</span> <span class="nx">objLoadingImage</span><span class="p">.</span><span class="nx">width</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">);</span>
+        <span class="nx">objLoadingImage</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;block&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// set height of Overlay to take up whole page and show</span>
+    <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arrayPageSize</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">);</span>
+    <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;block&#39;</span><span class="p">;</span>
+
+    <span class="c1">// preload image</span>
+    <span class="nx">imgPreload</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Image</span><span class="p">();</span>
+
+    <span class="nx">imgPreload</span><span class="p">.</span><span class="nx">onload</span><span class="o">=</span><span class="kd">function</span><span class="p">(){</span>
+        <span class="nx">objImage</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">objLink</span><span class="p">.</span><span class="nx">href</span><span class="p">;</span>
+
+        <span class="c1">// center lightbox and make sure that the top and left values are not negative</span>
+        <span class="c1">// and the image placed outside the viewport</span>
+        <span class="kd">var</span> <span class="nx">lightboxTop</span> <span class="o">=</span> <span class="nx">arrayPageScroll</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">((</span><span class="nx">arrayPageSize</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-</span> <span class="mi">35</span> <span class="o">-</span> <span class="nx">imgPreload</span><span class="p">.</span><span class="nx">height</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">lightboxLeft</span> <span class="o">=</span> <span class="p">((</span><span class="nx">arrayPageSize</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">20</span> <span class="o">-</span> <span class="nx">imgPreload</span><span class="p">.</span><span class="nx">width</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">);</span>
+        
+        <span class="nx">objLightbox</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="p">(</span><span class="nx">lightboxTop</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;0px&quot;</span> <span class="o">:</span> <span class="nx">lightboxTop</span> <span class="o">+</span> <span class="s2">&quot;px&quot;</span><span class="p">;</span>
+        <span class="nx">objLightbox</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="p">(</span><span class="nx">lightboxLeft</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">?</span> <span class="s2">&quot;0px&quot;</span> <span class="o">:</span> <span class="nx">lightboxLeft</span> <span class="o">+</span> <span class="s2">&quot;px&quot;</span><span class="p">;</span>
+
+
+        <span class="nx">objLightboxDetails</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">imgPreload</span><span class="p">.</span><span class="nx">width</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+        
+        <span class="k">if</span><span class="p">(</span><span class="nx">objLink</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)){</span>
+            <span class="nx">objCaption</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;block&#39;</span><span class="p">;</span>
+            <span class="c1">//objCaption.style.width = imgPreload.width + &#39;px&#39;;</span>
+            <span class="nx">objCaption</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="nx">objLink</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+            <span class="nx">objCaption</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+        
+        <span class="c1">// A small pause between the image loading and displaying is required with IE,</span>
+        <span class="c1">// this prevents the previous image displaying for a short burst causing flicker.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">navigator</span><span class="p">.</span><span class="nx">appVersion</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="s2">&quot;MSIE&quot;</span><span class="p">)</span><span class="o">!=-</span><span class="mi">1</span><span class="p">){</span>
+            <span class="nx">pause</span><span class="p">(</span><span class="mi">250</span><span class="p">);</span>
+        <span class="p">}</span> 
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">objLoadingImage</span><span class="p">)</span> <span class="p">{</span>  <span class="nx">objLoadingImage</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span> <span class="p">}</span>
+
+        <span class="c1">// Hide select boxes as they will &#39;peek&#39; through the image in IE</span>
+        <span class="nx">selects</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;select&quot;</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">!=</span> <span class="nx">selects</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">selects</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">style</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="s2">&quot;hidden&quot;</span><span class="p">;</span>
+        <span class="p">}</span>
+
+    
+        <span class="nx">objLightbox</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;block&#39;</span><span class="p">;</span>
+
+        <span class="c1">// After image is loaded, update the overlay height as the new image might have</span>
+        <span class="c1">// increased the overall page height.</span>
+        <span class="nx">arrayPageSize</span> <span class="o">=</span> <span class="nx">getPageSize</span><span class="p">();</span>
+        <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="p">(</span><span class="nx">arrayPageSize</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">);</span>
+        
+        <span class="c1">// Check for &#39;x&#39; keypress</span>
+        <span class="nx">listenKey</span><span class="p">();</span>
+
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">imgPreload</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">objLink</span><span class="p">.</span><span class="nx">href</span><span class="p">;</span>
+    
+<span class="p">}</span>
+
+
+
+
+
+<span class="c1">//</span>
+<span class="c1">// hideLightbox()</span>
+<span class="c1">//</span>
+<span class="kd">function</span> <span class="nx">hideLightbox</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="c1">// get objects</span>
+    <span class="nx">objOverlay</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;overlay&#39;</span><span class="p">);</span>
+    <span class="nx">objLightbox</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;lightbox&#39;</span><span class="p">);</span>
+
+    <span class="c1">// hide lightbox and overlay</span>
+    <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+    <span class="nx">objLightbox</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+
+    <span class="c1">// make select boxes visible</span>
+    <span class="nx">selects</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;select&quot;</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">!=</span> <span class="nx">selects</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">selects</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">style</span><span class="p">.</span><span class="nx">visibility</span> <span class="o">=</span> <span class="s2">&quot;visible&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="c1">// disable keypress listener</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">onkeypress</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+
+
+<span class="c1">//</span>
+<span class="c1">// initLightbox()</span>
+<span class="c1">// Function runs on window load, going through link tags looking for rel=&quot;lightbox&quot;.</span>
+<span class="c1">// These links receive onclick events that enable the lightbox display for their targets.</span>
+<span class="c1">// The function also inserts html markup at the top of the page which will be used as a</span>
+<span class="c1">// container for the overlay pattern and the inline image.</span>
+<span class="c1">//</span>
+<span class="kd">function</span> <span class="nx">initLightbox</span><span class="p">()</span>
+<span class="p">{</span>
+    
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">){</span> <span class="k">return</span><span class="p">;</span> <span class="p">}</span>
+    <span class="kd">var</span> <span class="nx">anchors</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">);</span>
+
+    <span class="c1">// loop through all anchor tags</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span><span class="nx">anchors</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">){</span>
+        <span class="kd">var</span> <span class="nx">anchor</span> <span class="o">=</span> <span class="nx">anchors</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">anchor</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">&quot;href&quot;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nx">anchor</span><span class="p">.</span><span class="nx">getAttribute</span><span class="p">(</span><span class="s2">&quot;rel&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;lightbox&quot;</span><span class="p">)){</span>
+            <span class="nx">anchor</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span><span class="nx">showLightbox</span><span class="p">(</span><span class="k">this</span><span class="p">);</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1">// the rest of this code inserts html at the top of the page that looks like this:</span>
+    <span class="c1">//</span>
+    <span class="c1">// &lt;div id=&quot;overlay&quot;&gt;</span>
+    <span class="c1">//     &lt;a href=&quot;#&quot; onclick=&quot;hideLightbox(); return false;&quot;&gt;&lt;img id=&quot;loadingImage&quot; /&gt;&lt;/a&gt;</span>
+    <span class="c1">// &lt;/div&gt;</span>
+    <span class="c1">// &lt;div id=&quot;lightbox&quot;&gt;</span>
+    <span class="c1">//     &lt;a href=&quot;#&quot; onclick=&quot;hideLightbox(); return false;&quot; title=&quot;Click anywhere to close image&quot;&gt;</span>
+    <span class="c1">//         &lt;img id=&quot;closeButton&quot; /&gt;        </span>
+    <span class="c1">//         &lt;img id=&quot;lightboxImage&quot; /&gt;</span>
+    <span class="c1">//     &lt;/a&gt;</span>
+    <span class="c1">//     &lt;div id=&quot;lightboxDetails&quot;&gt;</span>
+    <span class="c1">//         &lt;div id=&quot;lightboxCaption&quot;&gt;&lt;/div&gt;</span>
+    <span class="c1">//         &lt;div id=&quot;keyboardMsg&quot;&gt;&lt;/div&gt;</span>
+    <span class="c1">//     &lt;/div&gt;</span>
+    <span class="c1">// &lt;/div&gt;</span>
+    
+    <span class="kd">var</span> <span class="nx">objBody</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementsByTagName</span><span class="p">(</span><span class="s2">&quot;body&quot;</span><span class="p">).</span><span class="nx">item</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    
+    <span class="c1">// create overlay div and hardcode some functional styles (aesthetic styles are in CSS file)</span>
+    <span class="kd">var</span> <span class="nx">objOverlay</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">);</span>
+    <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="s1">&#39;overlay&#39;</span><span class="p">);</span>
+    <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span><span class="nx">hideLightbox</span><span class="p">();</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;}</span>
+    <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+    <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s1">&#39;absolute&#39;</span><span class="p">;</span>
+    <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">top</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
+    <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span><span class="p">;</span>
+    <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">zIndex</span> <span class="o">=</span> <span class="s1">&#39;90&#39;</span><span class="p">;</span>
+    <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="s1">&#39;100%&#39;</span><span class="p">;</span>
+    <span class="nx">objBody</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">objOverlay</span><span class="p">,</span> <span class="nx">objBody</span><span class="p">.</span><span class="nx">firstChild</span><span class="p">);</span>
+    
+    <span class="kd">var</span> <span class="nx">arrayPageSize</span> <span class="o">=</span> <span class="nx">getPageSize</span><span class="p">();</span>
+    <span class="kd">var</span> <span class="nx">arrayPageScroll</span> <span class="o">=</span> <span class="nx">getPageScroll</span><span class="p">();</span>
+
+    <span class="c1">// preload and create loader image</span>
+    <span class="kd">var</span> <span class="nx">imgPreloader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Image</span><span class="p">();</span>
+    
+    <span class="c1">// if loader image found, create link to hide lightbox and create loadingimage</span>
+    <span class="nx">imgPreloader</span><span class="p">.</span><span class="nx">onload</span><span class="o">=</span><span class="kd">function</span><span class="p">(){</span>
+
+        <span class="kd">var</span> <span class="nx">objLoadingImageLink</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">);</span>
+        <span class="nx">objLoadingImageLink</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">,</span><span class="s1">&#39;#&#39;</span><span class="p">);</span>
+        <span class="nx">objLoadingImageLink</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span><span class="nx">hideLightbox</span><span class="p">();</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;}</span>
+        <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">objLoadingImageLink</span><span class="p">);</span>
+        
+        <span class="kd">var</span> <span class="nx">objLoadingImage</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;img&quot;</span><span class="p">);</span>
+        <span class="nx">objLoadingImage</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">loadingImage</span><span class="p">;</span>
+        <span class="nx">objLoadingImage</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="s1">&#39;loadingImage&#39;</span><span class="p">);</span>
+        <span class="nx">objLoadingImage</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s1">&#39;absolute&#39;</span><span class="p">;</span>
+        <span class="nx">objLoadingImage</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">zIndex</span> <span class="o">=</span> <span class="s1">&#39;150&#39;</span><span class="p">;</span>
+        <span class="nx">objLoadingImageLink</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">objLoadingImage</span><span class="p">);</span>
+
+        <span class="nx">imgPreloader</span><span class="p">.</span><span class="nx">onload</span><span class="o">=</span><span class="kd">function</span><span class="p">(){};</span>  <span class="c1">// clear onLoad, as IE will flip out w/animated gifs</span>
+
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">imgPreloader</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">loadingImage</span><span class="p">;</span>
+
+    <span class="c1">// create lightbox div, same note about styles as above</span>
+    <span class="kd">var</span> <span class="nx">objLightbox</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">);</span>
+    <span class="nx">objLightbox</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="s1">&#39;lightbox&#39;</span><span class="p">);</span>
+    <span class="nx">objLightbox</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+    <span class="nx">objLightbox</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s1">&#39;absolute&#39;</span><span class="p">;</span>
+    <span class="nx">objLightbox</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">zIndex</span> <span class="o">=</span> <span class="s1">&#39;100&#39;</span><span class="p">;</span>   
+    <span class="nx">objBody</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">objLightbox</span><span class="p">,</span> <span class="nx">objOverlay</span><span class="p">.</span><span class="nx">nextSibling</span><span class="p">);</span>
+    
+    <span class="c1">// create link</span>
+    <span class="kd">var</span> <span class="nx">objLink</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">);</span>
+    <span class="nx">objLink</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;href&#39;</span><span class="p">,</span><span class="s1">&#39;#&#39;</span><span class="p">);</span>
+    <span class="nx">objLink</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">,</span><span class="s1">&#39;Click to close&#39;</span><span class="p">);</span>
+    <span class="nx">objLink</span><span class="p">.</span><span class="nx">onclick</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span><span class="nx">hideLightbox</span><span class="p">();</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;}</span>
+    <span class="nx">objLightbox</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">objLink</span><span class="p">);</span>
+
+    <span class="c1">// preload and create close button image</span>
+    <span class="kd">var</span> <span class="nx">imgPreloadCloseButton</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Image</span><span class="p">();</span>
+
+    <span class="c1">// if close button image found, </span>
+    <span class="nx">imgPreloadCloseButton</span><span class="p">.</span><span class="nx">onload</span><span class="o">=</span><span class="kd">function</span><span class="p">(){</span>
+
+        <span class="kd">var</span> <span class="nx">objCloseButton</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;img&quot;</span><span class="p">);</span>
+        <span class="nx">objCloseButton</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">closeButton</span><span class="p">;</span>
+        <span class="nx">objCloseButton</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="s1">&#39;closeButton&#39;</span><span class="p">);</span>
+        <span class="nx">objCloseButton</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">position</span> <span class="o">=</span> <span class="s1">&#39;absolute&#39;</span><span class="p">;</span>
+        <span class="nx">objCloseButton</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">zIndex</span> <span class="o">=</span> <span class="s1">&#39;200&#39;</span><span class="p">;</span>
+        <span class="nx">objLink</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">objCloseButton</span><span class="p">);</span>
+
+        <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">imgPreloadCloseButton</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">closeButton</span><span class="p">;</span>
+
+    <span class="c1">// create image</span>
+    <span class="kd">var</span> <span class="nx">objImage</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;img&quot;</span><span class="p">);</span>
+    <span class="nx">objImage</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="s1">&#39;lightboxImage&#39;</span><span class="p">);</span>
+    <span class="nx">objLink</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">objImage</span><span class="p">);</span>
+    
+    <span class="c1">// create details div, a container for the caption and keyboard message</span>
+    <span class="kd">var</span> <span class="nx">objLightboxDetails</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">);</span>
+    <span class="nx">objLightboxDetails</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="s1">&#39;lightboxDetails&#39;</span><span class="p">);</span>
+    <span class="nx">objLightbox</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">objLightboxDetails</span><span class="p">);</span>
+
+    <span class="c1">// create caption</span>
+    <span class="kd">var</span> <span class="nx">objCaption</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">);</span>
+    <span class="nx">objCaption</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="s1">&#39;lightboxCaption&#39;</span><span class="p">);</span>
+    <span class="nx">objCaption</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">display</span> <span class="o">=</span> <span class="s1">&#39;none&#39;</span><span class="p">;</span>
+    <span class="nx">objLightboxDetails</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">objCaption</span><span class="p">);</span>
+
+    <span class="c1">// create keyboard message</span>
+    <span class="kd">var</span> <span class="nx">objKeyboardMsg</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">);</span>
+    <span class="nx">objKeyboardMsg</span><span class="p">.</span><span class="nx">setAttribute</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">,</span><span class="s1">&#39;keyboardMsg&#39;</span><span class="p">);</span>
+    <span class="nx">objKeyboardMsg</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">=</span> <span class="s1">&#39;press &lt;a href=&quot;#&quot; onclick=&quot;hideLightbox(); return false;&quot;&gt;&lt;kbd&gt;x&lt;/kbd&gt;&lt;/a&gt; to close&#39;</span><span class="p">;</span>
+    <span class="nx">objLightboxDetails</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">objKeyboardMsg</span><span class="p">);</span>
+
+
+<span class="p">}</span>
+
+
+
+
+<span class="c1">//</span>
+<span class="c1">// addLoadEvent()</span>
+<span class="c1">// Adds event to window.onload without overwriting currently assigned onload functions.</span>
+<span class="c1">// Function found at Simon Willison&#39;s weblog - http://simon.incutio.com/</span>
+<span class="c1">//</span>
+<span class="kd">function</span> <span class="nx">addLoadEvent</span><span class="p">(</span><span class="nx">func</span><span class="p">)</span>
+<span class="p">{</span>    
+    <span class="kd">var</span> <span class="nx">oldonload</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">onload</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">!=</span> <span class="s1">&#39;function&#39;</span><span class="p">){</span>
+        <span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="nx">func</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nb">window</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(){</span>
+        <span class="nx">oldonload</span><span class="p">();</span>
+        <span class="nx">func</span><span class="p">();</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+
+
+
+<span class="nx">addLoadEvent</span><span class="p">(</span><span class="nx">initLightbox</span><span class="p">);</span>   <span class="c1">// run initLightbox onLoad</span>
+</code></pre></div>
+
+    <hr>
+    <div class="pagination btn-group">
+      
+        <a class="btn prev" href="/lessons/2013/05/16/install-jekyll-bootstrap" title="install jekyll bootstrap">&larr; Previous</a>
+      
+        <a class="btn" href="/archive.html">Archive</a>
+      
+        <a class="btn next disabled">Next &rarr;</a>
+      
+    </div>
+    <hr>
+    
+  </div>
+  
+  <div class="span4">
+    <section>
+      <h4>Published</h4>
+      <div class="date"><span>16 May 2013</span></div>
+    </section>
+    
+      <section>
+        <h4>Category</h4>
+        <span class="category">
+          lessons
+        </span>
+      </section>
+         
+    
+      <section>
+        <h4>Tags</h4>
+        <ul class="tag_box">
+          
+          
+
+
+  
+     
+    	<li><a href="/tags.html#javascript-ref">javascript <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#web-ref">web <span>1</span></a></li>
+     
+    	<li><a href="/tags.html#lightbox-ref">lightbox <span>1</span></a></li>
+    
+  
+
+
+
+        </ul>
+      </section>
+             
+  </div>
+</div>
+
+
+      </div>
+
+      <footer>
+        <p>&copy; 2013 crazyjune
+          with help from <a href="http://jekyllbootstrap.com" target="_blank" title="The Definitive Jekyll Blogging Framework">Jekyll Bootstrap</a>
+          and <a href="http://github.com/dhulihan/hooligan" target="_blank">The Hooligan Theme</a>
+        </p>
+      </footer>
+    </div> <!-- /container -->
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="/assets/themes/hooligan/js/jquery.min.js"><\/script>')</script>
+    <script src="/assets/themes/hooligan/bootstrap/js/bootstrap.min.js"></script>
+
+    
+  </body>
+</html>
+

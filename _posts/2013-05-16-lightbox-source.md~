@@ -1,0 +1,15 @@
+---
+layout: post
+title: "lightbox source"
+description: "lightbox 源码阅读笔记"
+category: lessons
+tags: [javascript,web,lightbox]
+---
+{% include JB/setup %}
+
+## lightbox source code
+
+{% highlight javascript %}
+  
+{% endhighlight %}
+
