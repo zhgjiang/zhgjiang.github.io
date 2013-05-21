@@ -8,6 +8,8 @@ http://zhgjiang.github.io/categories.html
 http://zhgjiang.github.io/archive.html
 http://zhgjiang.github.io/rss.xml
 
+http://zhgjiang.github.io/js-app/2013/05/21/learn-backbone-todo
+http://zhgjiang.github.io/lessons/2013/05/17/lightbox-test
 http://zhgjiang.github.io/lessons/2013/05/16/lightbox-source
 http://zhgjiang.github.io/lessons/2013/05/16/install-jekyll-bootstrap
 http://zhgjiang.github.io/lessons/2011/12/29/jekyll-introduction
