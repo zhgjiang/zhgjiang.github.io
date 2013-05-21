@@ -7,6 +7,7 @@ http://zhgjiang.github.io/tags.html
 http://zhgjiang.github.io/categories.html
 http://zhgjiang.github.io/archive.html
 http://zhgjiang.github.io/rss.xml
+http://zhgjiang.github.io/js-projects.html
 
 http://zhgjiang.github.io/js-app/2013/05/21/learn-backbone-todo
 http://zhgjiang.github.io/lessons/2013/05/17/lightbox-test
