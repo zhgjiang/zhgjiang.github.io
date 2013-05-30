@@ -30,10 +30,10 @@ function getScrollOffsets(w){
 	
     var d = w.document;
     //IE标准模式 + W3C
-    if(d.compatMode = "CSS1Compat"){
+    if(d.compatMode == "CSS1Compat"){
         return{
             x: d.documentElement.scrollLeft,
-            y: d.documentElement.scrollTop,
+            y: d.documentElement.scrollTop
         };
     }
 
