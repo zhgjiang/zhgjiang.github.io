@@ -21,11 +21,13 @@ function getScrollOffsets(w){
     w = w || window;
 
     //IE8+ + W3C
-    if(w.pageXOffset != null)
+    if(w.pageXOffset != null){
         return {
             x: w.pageXOffset,
             y: w.pageYOffset
         };
+		}
+	
     var d = w.document;
     //IE标准模式 + W3C
     if(d.compatMode = "CSS1Compat"){
